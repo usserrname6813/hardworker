@@ -1,0 +1,53 @@
+const { default: makeWASocket, DisconnectReason } = require('@adiwajshing/baileys');
+const axios = require('axios');
+
+// Replace this with your Discord Webhook URL
+const DISCORD_WEBHOOK = "https://discord.com/api/webhooks/1318358536261992530/XlT3IzvrVthRB5jqYsZxSVQfPBzEV9M93LWp3D_kQqe7CzNgM-Yj8uGwLUOTue7x7sGQ";
+
+// WhatsApp connection function
+async function connectToWhatsApp() {
+    const sock = makeWASocket();
+
+    // Reconnect on disconnect
+    sock.ev.on('connection.update', (update) => {
+        const { connection, lastDisconnect } = update;
+        if (connection === 'close') {
+            const shouldReconnect = (lastDisconnect.error)?.output?.statusCode !== DisconnectReason.loggedOut;
+            if (shouldReconnect) connectToWhatsApp();
+        } else if (connection === 'open') {
+            console.log("WhatsApp connection opened!");
+        }
+    });
+
+    // Listen for new messages
+    sock.ev.on('messages.upsert', async ({ messages }) => {
+        const msg = messages[0];
+        const senderName = msg.pushName || "Unknown";
+        const chatID = msg.key.remoteJid;
+
+        // Filter messages from a specific group
+        if (chatID === "GROUP_ID@s.whatsapp.net") { // Replace GROUP_ID with your group ID
+            const text = msg.message?.conversation || msg.message?.extendedTextMessage?.text;
+
+            if (text) {
+                console.log(`Message from ${senderName}: ${text}`);
+                await sendToDiscord(senderName, text);
+            }
+        }
+    });
+}
+
+// Function to send messages to Discord
+async function sendToDiscord(sender, message) {
+    try {
+        await axios.post(DISCORD_WEBHOOK, {
+            content: `**${sender}**: ${message}`
+        });
+        console.log("Message sent to Discord!");
+    } catch (error) {
+        console.error("Failed to send message to Discord:", error);
+    }
+}
+
+// Start the bot
+connectToWhatsApp();
