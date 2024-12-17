@@ -3,7 +3,7 @@ from bs4 import BeautifulSoup
 import discord
 
 # Replace with your Discord bot token and webhook URLs
-bot_token = 'your_bot_token'
+bot_token = 'MTMxODM3MDk1MDE3MzAzMjUwMQ.Gt7L69.sKdNdn6oqYVm_K-KdQ7l_mrxONixoPTqF1gjPsn'
 homework_webhook_url = 'https://discord.com/api/webhooks/1318358536261992530/XlT3IzvrVthRB5jqYsZxSVQfPBzEV9M93LWp3D_kQqe7CzNgM-Yj8uGwLUOTue7x7sGQ'
 notices_webhook_url = 'https://discord.com/api/webhooks/1318367896618930177/FBZmNwGj6caC8IQIP0phuANHU_Zc0duFZKltrCOucIU09-uvJds3PQNJIfMz29ivHS2g'
 
